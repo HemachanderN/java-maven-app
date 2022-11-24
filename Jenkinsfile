@@ -1,34 +1,24 @@
-pipeline{
-agent {
-label "slave2"
-}
-tools{
-maven "m1"
-}
-
-stages{
-stage('Build'){
-steps{
-echo 'Build started......................'
-
-}
-}
-stage('Test'){
-steps{
-echo 'Testing.........................'
-
-}
-post{
-always{
-echo 'Post Actions.........................'
-}
-}
-}
-stage('Run'){
-steps{
-echo 'Running.....................'
-}
-}
-
-
+pipeline {
+	agent any
+	tools {
+        maven 'm1' 
+    }
+	stages {
+		stage('Build') {
+			steps {
+				sh 'mvn -B -DskipTests clean install'
+			}
+		}
+		stage('Test') {
+			steps {
+				sh 'mvn test'
+			}
+			post {
+				always {
+					junit 'target/surefire-reports/*.xml'
+				}
+			}
+		}
+		
+	}
 }
